@@ -1,0 +1,4 @@
+v 4
+file . "COMP_AND_WHEN_ELSE_25082023.vhdl" "ad2fb3e79fca34eaa35a835528c49e75cc96e4aa" "20230826022625.351":
+  entity comp_and_when_else_25082023 at 1( 0) + 0 on 4;
+  architecture comp_and_when_else_25082023 of comp_and_when_else_25082023 at 12( 184) + 0 on 4;

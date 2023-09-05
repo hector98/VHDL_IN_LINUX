@@ -1,0 +1,7 @@
+v 4
+file . "testbench.vhdl" "816431ad126a2516a4142e86e0ca00e6d9eee9bd" "20230829034617.904":
+  entity testbench at 1( 0) + 0 on 21;
+  architecture or_select of testbench at 7( 80) + 0 on 22;
+file . "COMP_OR_WITH_SELECT_28082023.vhdl" "f09fd7d20498627c92e513e59e351aa1cb5ad732" "20230829034617.903":
+  entity comp_or_with_select_28082023 at 1( 0) + 0 on 19;
+  architecture comp_or_with_select_28082023 of comp_or_with_select_28082023 at 12( 194) + 0 on 20;

@@ -1,0 +1,7 @@
+v 4
+file . "testbench.vhdl" "37078bb288ea8af1cfc1aec3f8a934f1aafe7ddc" "20230901192942.237":
+  entity testbench at 1( 0) + 0 on 13;
+  architecture nand_select of testbench at 7( 80) + 0 on 14;
+file . "COMP_NAND_WITH_SELECT_01092023.vhdl" "8171db3c3b1df8c09cfbbfa6fff4ed2e3130200c" "20230901192942.236":
+  entity comp_nand_with_select_01092023 at 1( 0) + 0 on 11;
+  architecture comp_nand_with_select_01092023 of comp_nand_with_select_01092023 at 12( 190) + 0 on 12;
