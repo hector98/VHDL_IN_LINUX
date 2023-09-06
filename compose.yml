@@ -1,0 +1,9 @@
+version: '3'
+services:
+  vhdl-linux:
+    build:
+      context: .
+      dockerfile: dev.Dockerfile
+    container_name: vhdl-linux
+    volumes:
+      - ./:/VHDL_Linux
