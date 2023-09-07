@@ -12,13 +12,14 @@ def Ports(ports)
   return ps
 end
 
+
 def TestBench(name_entity, ports, ps)
   signals = ""
   ports.each do |k, v|
     if k != ports.keys.last
-      signals += "\t\t\tsignal #{k}_tb: std_logic := '0',\n"
+      signals += "\t\t\tsignal #{k}_tb: std_logic := '0';\n"
     else
-      signals += "\t\t\tsignal #{k}_tb: std_logic,\n"
+      signals += "\t\t\tsignal #{k}_tb: std_logic;\n"
     end
   end
 
@@ -29,7 +30,17 @@ def TestBench(name_entity, ports, ps)
     pm += "\n"
   end
 
-  tests = <<-EOM
+  ts = ports.select { |k, v| v.eql("in")? }
+  tests = ""
+  div = 3
+  ts.each_key do |k|
+    6.times do |i|
+      if i+1 % div != 0 
+      end
+    end
+  end
+
+  test = <<-EOM
 -- Tests of the entity #{name_entity}
 library ieee;
 use ieee.std_logic_1164.all;
@@ -50,7 +61,7 @@ architecture #{name_entity}_test of TestBench is
 begin
         uut: #{name_entity}
         port map(
-#{pm}
+#{pm.gsub(';', ',')}
         );
 
         stim_proc: process
@@ -65,7 +76,7 @@ begin
 end #{name_entity}_test;
   EOM
 
-  return tests
+  return test
 end
 
 
@@ -77,7 +88,7 @@ def TemplateCode(name_entity, ports)
 
   
   code = <<-EOM
--- Development name: #{Open3.capture2("uname -n")[0]}
+-- Development name: Hector Manuel Barrios Barrios
 -- Operating System: #{Open3.capture2("uname -o")[0]}
 -- Kernel version: #{Open3.capture2("uname -r")[0]}
 -- ghdl version: #{ghdl_v}
