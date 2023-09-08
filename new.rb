@@ -30,15 +30,41 @@ def TestBench(name_entity, ports, ps)
     pm += "\n"
   end
 
-  ts = ports.select { |k, v| v.eql("in")? }
+  ts = []
+  ports.each { |k, v| ts << k if v == 'in' }
   tests = ""
-  div = 3
-  ts.each_key do |k|
-    6.times do |i|
-      if i+1 % div != 0 
+  div = ts.length + 1
+  val = Array.new(ts.length, 0)
+  i_aux = val.length - 1
+  aux = 0
+  
+  (ts.length * 2).times do |i|
+    j = 0
+    ts.each do |k|
+      tests += "\t\t\t#{k}_tb <= '#{val[j]}';\n"
+      
+      j += 1
+    end
+    tests += "\t\t\twait for 10 ns; \n\n"
+
+    if i_aux != 0 and aux == 0
+      if i_aux < val.length - 1
+        val[i_aux] += 1
+        val[i_aux+1] -= 1
+        puts "#{val}"
+      else
+        val[i_aux] += 1 if i_aux < val.length and i_aux != 0
       end
+      i_aux -= 1
+    else
+      val.map!{ |v| v = 0 } if i_aux == 0
+
+      val[i_aux] += 1
+
+      i_aux += 1
     end
   end
+tests += "\t\t\twait;"
 
   test = <<-EOM
 -- Tests of the entity #{name_entity}
@@ -72,6 +98,7 @@ begin
               -- b_tb <= '0';
               -- wait for 10 ns; tiempo de espera
               -- wait;
+#{tests}
         end process;
 end #{name_entity}_test;
   EOM
