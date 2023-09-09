@@ -1,5 +1,9 @@
 require "open3"
 
+def DecBin(n);
+
+end
+
 def Ports(ports)
   ps = ""
   ports.each do |k, v|
@@ -157,7 +161,6 @@ compile:
 
 run:
 	ghdl -r $(TEST_FILE) --vcd=testbench.vcd
-	gtkwave $(TEST_fILE).vcd
 
 clean:
 	ghdl --clean
