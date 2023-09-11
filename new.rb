@@ -1,7 +1,17 @@
 require "open3"
 
-def DecBin(n);
+def DecBin(n, ints)
+  bin = Array.new(ints, '0')
 
+  i = 0
+  loop do
+    bin[i] = (n % 2).to_s
+    n /= 2
+    i += 1
+    break if n == 0
+  end
+
+  return bin.reverse
 end
 
 def Ports(ports)
@@ -37,36 +47,16 @@ def TestBench(name_entity, ports, ps)
   ts = []
   ports.each { |k, v| ts << k if v == 'in' }
   tests = ""
-  div = ts.length + 1
-  val = Array.new(ts.length, 0)
-  i_aux = val.length - 1
-  aux = 0
   
-  (ts.length * 2).times do |i|
-    j = 0
-    ts.each do |k|
-      tests += "\t\t\t#{k}_tb <= '#{val[j]}';\n"
-      
-      j += 1
+  (2 ** ts.length).times do |i|
+    val = DecBin(i, ts.length)
+
+    ts.each_with_index do |v, index|
+      tests += "\t\t\t#{v}_tb <= '#{val[index]}';\n"
     end
+
     tests += "\t\t\twait for 10 ns; \n\n"
 
-    if i_aux != 0 and aux == 0
-      if i_aux < val.length - 1
-        val[i_aux] += 1
-        val[i_aux+1] -= 1
-        puts "#{val}"
-      else
-        val[i_aux] += 1 if i_aux < val.length and i_aux != 0
-      end
-      i_aux -= 1
-    else
-      val.map!{ |v| v = 0 } if i_aux == 0
-
-      val[i_aux] += 1
-
-      i_aux += 1
-    end
   end
 tests += "\t\t\twait;"
 
