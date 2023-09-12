@@ -32,12 +32,13 @@ end
 def TestBench(name_entity, ports, ps)
   signals = ""
   ports.each do |k, v|
+    len = v[1].to_i
     if v[0] == "in"
-      len = v[1].to_i
-      size = (len > 1)? "std_logic_vector :=  
-      signals += "\t\t\tsignal #{k}_tb: std_logic := '0';\n"
+      size = (len > 1)? "std_logic_vector(#{len-1} downto 0) := \"#{"0"*len}\"" : "std_logic := '0'"
+      signals += "\t\t\tsignal #{k}_tb: #{size};\n"
     else
-      signals += "\t\t\tsignal #{k}_tb: std_logic;\n"
+      size = (len > 1)? "std_logic_vector(#{len-1} downto 0)" : "std_logic"
+      signals += "\t\t\tsignal #{k}_tb: #{size};\n"
     end
   end
 
@@ -48,10 +49,15 @@ def TestBench(name_entity, ports, ps)
     pm += "\n"
   end
 
-  ts = []
-  ports.each { |k, v| ts << k if v == 'in' }
   tests = ""
+  ts = []
+  auto = true
+  ports.each do |k, v| 
+    ts << k if v[0] == 'in'
+    auto = false if v[1].to_i > 1
+  end
   
+  if auto
   (2 ** ts.length).times do |i|
     val = DecBin(i, ts.length)
 
@@ -63,6 +69,7 @@ def TestBench(name_entity, ports, ps)
 
   end
 tests += "\t\t\twait;"
+  end
 
   test = <<-EOM
 -- Tests of the entity #{name_entity}
@@ -109,18 +116,18 @@ def TemplateCode(name_entity, ports)
 
   ghdl_v = ""
   Open3.capture2("ghdl --version")[0].each_line do |l|
-    ghdl_v += "-- #{l}"
+    ghdl_v += "-- #{l.chomp}\n"
   end
 
   
   code = <<-EOM
-------------------------------------------------------*
--- Development name: Hector Manuel Barrios Barrios    |
--- Operating System: #{Open3.capture2("uname -o")[0]} |
--- Kernel version: #{Open3.capture2("uname -r")[0]}   |
--- ghdl version: #{ghdl_v}                            |
--- date create: #{Open3.capture2("date")[0]}          |
-------------------------------------------------------*
+-- ************************************************************************************************
+-- Development name: Hector Manuel Barrios Barrios                                   
+-- Operating System: #{Open3.capture2("uname -o")[0]}                                
+-- Kernel version: #{Open3.capture2("uname -r")[0]}                                  
+-- ghdl version: #{ghdl_v}                                                           
+-- date create: #{Open3.capture2("date")[0]}                                         
+-- ************************************************************************************************
 
 library ieee;
 use ieee.std_logic_1164.all;
