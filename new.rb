@@ -17,7 +17,9 @@ end
 def Ports(ports)
   ps = ""
   ports.each do |k, v|
-    ps += "\t\t\t#{k}: #{v} std_logic"
+    len = v[1].to_i
+    size = (len > 1)? "std_logic_vector (#{len-1} downto 0)" : "std_logic"
+    ps += "\t\t\t#{k}: #{v[0]} #{size}"
 
     ps += ";" if k != ports.keys.last
     ps += "\n"
@@ -30,7 +32,9 @@ end
 def TestBench(name_entity, ports, ps)
   signals = ""
   ports.each do |k, v|
-    if k != ports.keys.last
+    if v[0] == "in"
+      len = v[1].to_i
+      size = (len > 1)? "std_logic_vector :=  
       signals += "\t\t\tsignal #{k}_tb: std_logic := '0';\n"
     else
       signals += "\t\t\tsignal #{k}_tb: std_logic;\n"
@@ -102,6 +106,7 @@ end
 
 
 def TemplateCode(name_entity, ports)
+
   ghdl_v = ""
   Open3.capture2("ghdl --version")[0].each_line do |l|
     ghdl_v += "-- #{l}"
@@ -109,11 +114,13 @@ def TemplateCode(name_entity, ports)
 
   
   code = <<-EOM
--- Development name: Hector Manuel Barrios Barrios
--- Operating System: #{Open3.capture2("uname -o")[0]}
--- Kernel version: #{Open3.capture2("uname -r")[0]}
--- ghdl version: #{ghdl_v}
--- date create: #{Open3.capture2("date")[0]}
+------------------------------------------------------*
+-- Development name: Hector Manuel Barrios Barrios    |
+-- Operating System: #{Open3.capture2("uname -o")[0]} |
+-- Kernel version: #{Open3.capture2("uname -r")[0]}   |
+-- ghdl version: #{ghdl_v}                            |
+-- date create: #{Open3.capture2("date")[0]}          |
+------------------------------------------------------*
 
 library ieee;
 use ieee.std_logic_1164.all;
@@ -166,9 +173,9 @@ n_ports = gets.chomp.to_i
 h_port = {}
 
 n_ports.times do |i|
-  puts "Nombre del puerto , un espacio y tipo"
+  puts "Separados por un espacio, escribe el nombre, tipo y tamaño del puerto:"
   p = gets.chomp.split(" ")
-  h_port[p[0]] = p[1]
+  h_port[p[0]] = [p[1], p[2]]
 end
 
 #template = TemplateCode(name_e, h_port)
