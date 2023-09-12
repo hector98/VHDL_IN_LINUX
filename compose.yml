@@ -7,3 +7,5 @@ services:
     container_name: vhdl-linux
     volumes:
       - ./:/VHDL_Linux
+    environment:
+      - DISPLAY=${DISPLAY}

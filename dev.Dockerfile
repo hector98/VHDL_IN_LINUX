@@ -9,4 +9,6 @@ RUN apt-get update && \
 
 WORKDIR /VHDL_Linux
 
+ENV DISPLAY=:0
+
 CMD ["bash"]
