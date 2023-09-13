@@ -14,6 +14,7 @@ def DecBin(n, ints)
   return bin.reverse
 end
 
+
 def Ports(ports)
   ps = ""
   ports.each do |k, v|
