@@ -8,7 +8,7 @@ architecture sim of TestBench is
     signal A_tb, B_tb : std_logic := '0';
     signal Q_tb : std_logic;
 
-    component COMP_AND_WITH_SELECT_25082023
+    component COMP_AND_WHEN_ELSE_25082023
         port(
             A : in  std_logic;
             B : in  std_logic;
@@ -17,7 +17,7 @@ architecture sim of TestBench is
     end component;
 
 begin
-    uut : COMP_AND_WITH_SELECT_25082023
+    uut : COMP_AND_WHEN_ELSE_25082023
         port map(
             A => A_tb,
             B => B_tb,
