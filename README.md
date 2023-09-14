@@ -1,7 +1,17 @@
 # VHDL_IN_LINUX
 Ejercicios basicos en VHDL, para compilar con ghdl, y visualizar los datos en gtkwave, al igual de un pequño script en ruby para generar la estructura de un proyecto
 
-Pasos para crear, compilar y ejecutar una proyecto VHDL
+~Uso docker
+Despues de bajarnos el repositorio haremos lo siguiente:
+1. En la terminal dentro de la carpeta del repositorio escribimos "docker compose build" sin comillas.
+
+2. Despues "docker compose up -d".
+
+3. al final solo "docker compose run -it vhdl-linux.
+Esto no abrira una nueva sesion de bash donde se ejecutaran los siguientes pasos:
+
+~Pasos para crear, compilar y ejecutar una proyecto VHDL
+
 1. En la terminal dentro de la carpeta del repositoario escribimos "ruby new.rb" sin comillas, y damos enter.
 
 2. Asignamos un nombre a nuestro proyecto, y damos enter.
