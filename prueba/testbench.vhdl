@@ -1,17 +1,17 @@
--- Tests of the entity comp_not_when_else_13092023
+-- Tests of the entity prueba
 library ieee;
 use ieee.std_logic_1164.all;
 
 entity TestBench is
 end TestBench;
 
-architecture comp_not_when_else_13092023_test of TestBench is
+architecture prueba_test of TestBench is
 
 			signal a_tb: std_logic := '0';
 			signal q_tb: std_logic;
 
 
-        component comp_not_when_else_13092023
+        component prueba
             port(
   			a: in std_logic;
 			q: out std_logic
@@ -20,7 +20,7 @@ architecture comp_not_when_else_13092023_test of TestBench is
         end component;
 
 begin
-        uut: comp_not_when_else_13092023
+        uut: prueba
         port map(
 			a => a_tb,
 			q => q_tb
@@ -43,4 +43,4 @@ begin
 
 			wait;
         end process;
-end comp_not_when_else_13092023_test;
+end prueba_test;
