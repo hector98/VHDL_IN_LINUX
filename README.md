@@ -16,9 +16,9 @@ Esto no abrira una nueva sesion de bash donde se ejecutaran los siguientes pasos
 
 2. Asignamos un nombre a nuestro proyecto, y damos enter.
 
-3. escrbimos el numero de varibles que vamos a necesitar.
+3. escribimos el numero de varibles que vamos a necesitar.
 
-4. nombre y tipo de cada variable.
+4. nombre, tipo(in, out), y longitud de cada variable.
 
 5. Hasta este punto ya el srcipt nos genero unas plantillas, para nuestro proyecto abrimos el archivo nombre_de_nuestro_proyeto.vhdl, que esta en la carpeta creada con el mismo nombre y comenzamos a escribir la logica de nuestro programa.
 
