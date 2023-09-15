@@ -1,4 +1,4 @@
-VHDL_FILE = comp_or_case_01092023
+VHDL_FILE = comp_not_case_14092023
 TEST_FILE = testbench
 
 all: compile run
@@ -13,3 +13,4 @@ run:
 clean:
 	ghdl --clean
 	rm -f $(VHDL_FILE) $(TEST_FILE)
+

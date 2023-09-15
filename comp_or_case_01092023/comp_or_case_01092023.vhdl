@@ -8,7 +8,7 @@ entity comp_or_case_01092023 is
 		b: in std_logic;
 		q: out std_logic
 );
-end comp_or_case;
+end comp_or_case_01092023;
 
 architecture comp_or_case_01092023 of comp_or_case_01092023 is
 
@@ -37,3 +37,4 @@ begin
 								
 				end case;
 		end process;
+end comp_or_case_01092023;
