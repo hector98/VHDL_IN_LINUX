@@ -13,25 +13,27 @@
 -- GHDL is free software, covered by the GNU General Public License.  There is NO
 -- warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
                                                            
--- date create: Wed Sep 13 06:19:18 PM CST 2023
+-- date create: Mon Sep 18 11:32:13 AM CST 2023
                                          
 -- ************************************************************************************************
 
 library ieee;
 use ieee.std_logic_1164.all;
 
-entity prueba is
+entity comp_xor_ecbool_18092023 is
         
        port(
 			a: in std_logic;
+			b: in std_logic;
 			q: out std_logic
 
        );
 
-end prueba;
+end comp_xor_ecbool_18092023;
 
-architecture prueba of prueba is
+architecture comp_xor_ecbool_18092023 of comp_xor_ecbool_18092023 is
         
 begin
+		q <= a xor b;
 
-end prueba;
+end comp_xor_ecbool_18092023;

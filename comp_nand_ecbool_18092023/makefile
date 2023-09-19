@@ -1,4 +1,4 @@
-VHDL_FILE = prueba
+VHDL_FILE = comp_nand_ecbool_18092023
 TEST_FILE = testbench
 
 all: compile run
