@@ -56,7 +56,7 @@ begin
 
 		a_tb <= "11111111";
 		b_tb <= "11111111";
-		cin_tb <= '0';
+		cin_tb <= '1';
 		wait for 10 ns;
 
 	-- Inserta más estímulos o espera aquí según tus necesidades
