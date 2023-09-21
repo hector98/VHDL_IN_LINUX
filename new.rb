@@ -1,4 +1,56 @@
 require "open3"
+#require "curses"
+
+=begin
+def FindFile
+  Curses.init_screen
+  Curses.noecho
+  Curses.cbreak
+  Curses.curs_set(0)
+  Curses.stdscr.keypad(true)
+
+  Curses.addstr("Escribe el nombre de la solucion")
+  select_file = Curses.getstr
+
+  Curses.close_screen
+
+  select_file.strip
+end
+
+file = FindFile()
+puts file
+=end
+def Solution(name)
+  comp = "\t\tcomponent #{name} is \n"
+
+  while true
+    if Dir.exist?(name)
+      solut = File.read("#{name}/#{name}.vhdl")
+
+      i = false
+      f = true
+      solut.each_line do |l|
+        if i and f
+          comp += "\t\t\t#{l} \n"
+          f = false if l == ");"
+          puts f, l
+          sleep(3)
+        else
+          i = true if l.split(" ").include?("entity")
+        end
+      end
+      comp += "\t\t end component;"
+      puts "#{comp}"
+      break
+    else
+      puts "No existe un solucion con ese nombre, favor de escribir el nombre de nuevo:"
+      name = gets.chomp
+    end
+  end
+end
+s = gets.chomp
+Solution(s)
+
 
 def DecBin(n, ints)
   bin = Array.new(ints, '0')
@@ -13,6 +65,7 @@ def DecBin(n, ints)
 
   return bin.reverse
 end
+
 
 def Ports(ports)
   ps = ""
@@ -189,14 +242,31 @@ end
 
 Dir.mkdir(name_e) unless Dir.exist?(name_e)
 
-entity = File.new("#{name_e}/#{name_e}.vhdl", "w")
-entity.write(TemplateCode(name_e, Ports(h_port)))
-entity.close
+main = Thread.new do 
+  entity = File.new("#{name_e}/#{name_e}.vhdl", "w")
+  entity.write(TemplateCode(name_e, Ports(h_port)))
+  entity.close
+end
 
-testfile = File.new("#{name_e}/testbench.vhdl", "w")
-testfile.write(TestBench(name_e, h_port, Ports(h_port)))
-testfile.close
+test = Thread.new do
+  testfile = File.new("#{name_e}/testbench.vhdl", "w")
+  testfile.write(TestBench(name_e, h_port, Ports(h_port)))
+  testfile.close
+end
 
-mf = File.new("#{name_e}/makefile", "w")
-mf.write(Makefile(name_e))
-mf.close
+make = Thread.new do
+  mf = File.new("#{name_e}/makefile", "w")
+  mf.write(Makefile(name_e))
+  mf.close
+end
+
+main.join
+test.join
+make.join
+system("clear")
+fin = Time.now
+
+puts "\n\t>>>Proyecto #{name_e} creado con exito<<<\n"
+puts "Se crearon los siguientes archivos, dentro de la carpeta #{name_e}"
+Dir.chdir(name_e)
+system("ls -1")
