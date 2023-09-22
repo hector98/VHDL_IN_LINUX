@@ -1,12 +1,13 @@
 require "open3"
 
 def Components(name, name_entity)
-  comp = "\t\tcomponent #{name_entity} is \n"
+  comp = "\t\tcomponent #{name} is \n"
 
   while true
     if Dir.exist?(name)
       solut = File.read("#{name}/#{name}.vhdl")
-      system("cp #{name}/#{name}.vhdl /#{name_entity}")
+
+      system("cp #{name}/#{name}.vhdl #{name_entity}/")
 
       i = false
       f = true
@@ -18,7 +19,7 @@ def Components(name, name_entity)
           i = true if l.split(" ").include?("entity")
         end
       end
-      comp += "\t\t end component;\n"
+      comp += "\t\t end component;\n\n"
       break
     else
       puts "No existe un solucion con ese nombre, favor de escribir el nombre de nuevo:"
@@ -174,7 +175,7 @@ architecture #{name_entity} of #{name_entity} is
 -- Aqui van las señales
 
 -- Y los components
-#{component}        
+#{component.chomp}        
 begin
 --Apartir de aqui va el codigo de tu programa
 
@@ -186,19 +187,19 @@ end #{name_entity};
 end
 
 
-def Makefile(entity_name, component)
+def Makefile(entity_name, component = [])
   comp = ""
   files_comp = ""
-  unless component.null?
-    component.each_with_index do |i, v|
-      files_comp += "COMPONENT_FILE#{i} = #{v}"
+  unless component.none?
+    component.each_with_index do |v, i|
+      files_comp += "COMPONENT_FILE#{i} = #{v}\n"
       comp += "\t$(COMPONENT_FILE#{i}).vhdl"
     end
   end
 
   mkfile = <<-EOM
 VHDL_FILE = #{entity_name}
-#{files_comp}
+#{files_comp.chomp}
 TEST_FILE = testbench
 
 all: compile run
@@ -245,7 +246,7 @@ if add_comp == 's' or add_comp == 'S'
   str_comp = ""
   names_comp = []
   n_comp.times do |i|
-    puts "Escribe el nombre de la #{i} solucion(componente), sin extenciones"
+    puts "Escribe el nombre de la #{i+1} solucion(componente), sin extenciones"
     name_comp = gets.chomp
     component = Components(name_comp, name_e)
     str_comp += component[1]
@@ -253,7 +254,7 @@ if add_comp == 's' or add_comp == 'S'
   end
 end
 
-main = Thread.new do 
+main = Thread.new do
   entity = File.new("#{name_e}/#{name_e}.vhdl", "w")
   if add_comp == 's' or add_comp == 'S'
     entity.write(TemplateCode(name_e, Ports(h_port), str_comp))
@@ -279,9 +280,8 @@ main.join
 test.join
 make.join
 system("clear")
-fin = Time.now
 
 puts "\n\t>>>Proyecto #{name_e} creado con exito<<<\n"
-puts "Se crearon los siguientes archivos, dentro de la carpeta #{name_e}"
+puts "Se crearon o agregaron los siguientes archivos, dentro de la carpeta #{name_e}"
 Dir.chdir(name_e)
 system("ls -1")
