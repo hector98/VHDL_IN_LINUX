@@ -272,7 +272,11 @@ end
 
 make = Thread.new do
   mf = File.new("#{name_e}/makefile", "w")
-  mf.write(Makefile(name_e, names_comp))
+  if add_comp == 's' or add_comp == 'S'
+    mf.write(Makefile(name_e, names_comp))
+  else
+    mf.write(Makefile(name_e))
+  end
   mf.close
 end
 
