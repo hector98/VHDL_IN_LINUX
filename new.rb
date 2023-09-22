@@ -1,55 +1,32 @@
 require "open3"
-#require "curses"
 
-=begin
-def FindFile
-  Curses.init_screen
-  Curses.noecho
-  Curses.cbreak
-  Curses.curs_set(0)
-  Curses.stdscr.keypad(true)
-
-  Curses.addstr("Escribe el nombre de la solucion")
-  select_file = Curses.getstr
-
-  Curses.close_screen
-
-  select_file.strip
-end
-
-file = FindFile()
-puts file
-=end
-def Solution(name)
-  comp = "\t\tcomponent #{name} is \n"
+def Components(name, name_entity)
+  comp = "\t\tcomponent #{name_entity} is \n"
 
   while true
     if Dir.exist?(name)
       solut = File.read("#{name}/#{name}.vhdl")
+      system("cp #{name}/#{name}.vhdl /#{name_entity}")
 
       i = false
       f = true
       solut.each_line do |l|
         if i and f
           comp += "\t\t\t#{l} \n"
-          f = false if l == ");"
-          puts f, l
-          sleep(3)
+          f = false if l.split(" ").include?(");")
         else
           i = true if l.split(" ").include?("entity")
         end
       end
-      comp += "\t\t end component;"
-      puts "#{comp}"
+      comp += "\t\t end component;\n"
       break
     else
       puts "No existe un solucion con ese nombre, favor de escribir el nombre de nuevo:"
       name = gets.chomp
     end
   end
+  return [name, comp]
 end
-s = gets.chomp
-Solution(s)
 
 
 def DecBin(n, ints)
@@ -165,7 +142,7 @@ end #{name_entity}_test;
 end
 
 
-def TemplateCode(name_entity, ports)
+def TemplateCode(name_entity, ports, component = "")
 
   ghdl_v = ""
   Open3.capture2("ghdl --version")[0].each_line do |l|
@@ -194,8 +171,12 @@ entity #{name_entity} is
 end #{name_entity};
 
 architecture #{name_entity} of #{name_entity} is
-        
+-- Aqui van las señales
+
+-- Y los components
+#{component}        
 begin
+--Apartir de aqui va el codigo de tu programa
 
 end #{name_entity};
   EOM
@@ -205,15 +186,25 @@ end #{name_entity};
 end
 
 
-def Makefile(entity_name)
+def Makefile(entity_name, component)
+  comp = ""
+  files_comp = ""
+  unless component.null?
+    component.each_with_index do |i, v|
+      files_comp += "COMPONENT_FILE#{i} = #{v}"
+      comp += "\t$(COMPONENT_FILE#{i}).vhdl"
+    end
+  end
+
   mkfile = <<-EOM
 VHDL_FILE = #{entity_name}
+#{files_comp}
 TEST_FILE = testbench
 
 all: compile run
 
 compile:
-	ghdl -a $(VHDL_FILE).vhdl\t$(TEST_FILE).vhdl
+	ghdl -a $(VHDL_FILE).vhdl\t$(TEST_FILE).vhdl#{comp}
 	ghdl -e $(TEST_FILE)
 
 run:
@@ -238,13 +229,37 @@ n_ports.times do |i|
   h_port[p[0]] = [p[1], p[2]]
 end
 
+puts "Quieres agregar componentes externos? s/n"
+add_comp = gets.chomp
+
 #template = TemplateCode(name_e, h_port)
 
 Dir.mkdir(name_e) unless Dir.exist?(name_e)
 
+# Add Components
+if add_comp == 's' or add_comp == 'S'
+  puts "Cuantos Componentes externos quieres agregar? "
+  n_comp = gets.chomp.to_i
+
+  components = []
+  str_comp = ""
+  names_comp = []
+  n_comp.times do |i|
+    puts "Escribe el nombre de la #{i} solucion(componente), sin extenciones"
+    name_comp = gets.chomp
+    component = Components(name_comp, name_e)
+    str_comp += component[1]
+    names_comp << component[0]
+  end
+end
+
 main = Thread.new do 
   entity = File.new("#{name_e}/#{name_e}.vhdl", "w")
-  entity.write(TemplateCode(name_e, Ports(h_port)))
+  if add_comp == 's' or add_comp == 'S'
+    entity.write(TemplateCode(name_e, Ports(h_port), str_comp))
+  else
+    entity.write(TemplateCode(name_e, Ports(h_port)))
+  end
   entity.close
 end
 
@@ -256,7 +271,7 @@ end
 
 make = Thread.new do
   mf = File.new("#{name_e}/makefile", "w")
-  mf.write(Makefile(name_e))
+  mf.write(Makefile(name_e, names_comp))
   mf.close
 end
 
