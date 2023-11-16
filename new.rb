@@ -64,7 +64,7 @@ def TestBench(name_entity, ports, ps)
   signals = ""
   ports.each do |k, v|
     len = v[1].to_i
-    if v[0] == "in"
+    if v[0] == "in" or v[0] == "clock"
       size = (len > 1)? "std_logic_vector(#{len-1} downto 0) := \"#{"0"*len}\"" : "std_logic := '0'"
       signals += "\t\t\tsignal #{k}_tb: #{size};\n"
     else
@@ -83,24 +83,45 @@ def TestBench(name_entity, ports, ps)
   tests = ""
   ts = []
   auto = true
+  greater_length = 0
+  lengths = []
+  len_aux = {}
   ports.each do |k, v| 
-    ts << k if v[0] == 'in'
-    auto = false if v[1].to_i > 1
+    ts << [k, v[0], v[1]] if v[0] == 'in' or v[0] == 'clock'
+    if v[0] == 'in'
+      len_aux[k.to_s] = 0
+      lengths << v[1].to_i    
+    end
+    greater_length = v[1].to_i if greater_length < v[1].to_i
+    #auto = false if v[1].to_i > 1
   end
   
-  if auto
-  (2 ** ts.length).times do |i|
-    val = DecBin(i, ts.length)
+    #lengths_aux = Array.new(lengths.length, 0)
+  n_casos = (greater_length <= 16)? greater_length : 16
+  (2 ** n_casos).times do |i|
 
-    ts.each_with_index do |v, index|
-      tests += "\t\t\t#{v}_tb <= '#{val[index]}';\n"
+    ts.each do |v, type, size|
+      if type == 'clock'
+        val = "#{v}_tb not"
+      else
+        dec = len_aux[v]
+        val_aux = DecBin(dec, size.to_i).join
+
+        if len_aux[v] < (2 ** size.to_i)-1
+          len_aux[v] += 1
+        else
+          len_aux[v] = 0
+        end
+
+        val = (size.to_i == 1)? "'#{val_aux}'" : "\"#{val_aux}\""
+      end
+
+      tests += "\t\t\t#{v}_tb <= #{val};\n"
     end
 
-    tests += "\t\t\twait for 10 ns; \n\n"
-
+  tests += "\t\t\twait for 10 ns; \n\n"
   end
 tests += "\t\t\twait;"
-  end
 
   test = <<-EOM
 -- Tests of the entity #{name_entity}
@@ -227,6 +248,7 @@ h_port = {}
 n_ports.times do |i|
   puts "Separados por un espacio, escribe el nombre, tipo y tamaño del puerto:"
   p = gets.chomp.split(" ")
+  p[1] = "in" if p[1] == "in" or p[1] == "clock"
   h_port[p[0]] = [p[1], p[2]]
 end
 
@@ -253,6 +275,8 @@ if add_comp == 's' or add_comp == 'S'
     names_comp << component[0]
   end
 end
+
+puts "Trabajando en Tu Proyecto VHDL ..."
 
 main = Thread.new do
   entity = File.new("#{name_e}/#{name_e}.vhdl", "w")

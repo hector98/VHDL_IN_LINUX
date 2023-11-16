@@ -40,6 +40,6 @@ architecture segmento_d_25092023 of segmento_d_25092023 is
         
 begin
 --Apartir de aqui va el codigo de tu programa
-		q <= (not(c) and (not(b xor d))) or (c and not(a and b and d)) or a;
-
+		--q <= (not(a) and not(b) and c) or (not(b) and not(c) and not(d)) or (b and not(c) and d) or (c and not(d)) or a;
+		q <= (not(a or b) and (c or not(d))) or (b and not(c) and d) or (c and not(d)) or a;
 end segmento_d_25092023;

@@ -8,12 +8,14 @@ end TestBench;
 architecture comp_or_when_else_13092023_test of TestBench is
 
 			signal a_tb: std_logic := '0';
+			signal b_tb: std_logic := '0';
 			signal q_tb: std_logic;
 
 
         component comp_or_when_else_13092023
             port(
   			a: in std_logic;
+			b: in std_logic;
 			q: out std_logic
 
             );
@@ -23,6 +25,7 @@ begin
         uut: comp_or_when_else_13092023
         port map(
 			a => a_tb,
+			b => b_tb,
 			q => q_tb
 
         );
@@ -36,9 +39,19 @@ begin
               -- wait for 10 ns; tiempo de espera
               -- wait;
 			a_tb <= '0';
+			b_tb <= '0';
+			wait for 10 ns; 
+
+			a_tb <= '0';
+			b_tb <= '1';
 			wait for 10 ns; 
 
 			a_tb <= '1';
+			b_tb <= '0';
+			wait for 10 ns; 
+
+			a_tb <= '1';
+			b_tb <= '1';
 			wait for 10 ns; 
 
 			wait;

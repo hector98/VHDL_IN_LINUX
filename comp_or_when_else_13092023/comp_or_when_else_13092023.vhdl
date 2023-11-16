@@ -24,6 +24,7 @@ entity comp_or_when_else_13092023 is
         
        port(
 			a: in std_logic;
+		    b: in std_logic;
 			q: out std_logic
 
        );
@@ -31,10 +32,14 @@ entity comp_or_when_else_13092023 is
 end comp_or_when_else_13092023;
 
 architecture comp_or_when_else_13092023 of comp_or_when_else_13092023 is
+		signal c: std_logic_vector(1 downto 0);
         
 begin
-		q <= '1' when a = '0' else
-			 '0' when a = '1' else
+		c <= a & b;
+		q <= '0' when c = "00" else
+			 '1' when c = "01" else
+			 '1' when c = "10" else
+			 '1' when c = "11" else
 			 '0';
 
 end comp_or_when_else_13092023;
